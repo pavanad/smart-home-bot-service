@@ -5,6 +5,7 @@ from io import BytesIO
 import speech_recognition as sr
 from google_speech import Speech
 from pydub import AudioSegment
+from services.grace import grace_service_invoke
 from telegram import Update
 from telegram.ext import ContextTypes
 
@@ -20,17 +21,17 @@ async def voice_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> N
     await audio_file.download_to_memory(audio_memory)
     audio_memory.seek(0)
 
-    text = convert_audio_to_text(audio_memory)
-    logger.info(f"Received text: {text}")
+    user_message = convert_audio_to_text(audio_memory)
+    logger.info(f"Received text: {user_message}")
 
-    # TODO: implement calling Grace Service
-    response_text = "Olá Adilson, em que posso te ajudar."
+    # call grace service with user message
+    response_text = grace_service_invoke(user_message)
 
     temp_file = "temp.mp3"
     response_speech = Speech(response_text, lang="pt-BR")
     response_speech.save(temp_file)
 
-    await update.message.reply_voice(voice="output.mp3")
+    await update.message.reply_voice(voice=temp_file)
 
     if os.path.exists(temp_file):
         os.remove(temp_file)
