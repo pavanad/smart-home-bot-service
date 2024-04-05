@@ -19,4 +19,6 @@ def enable_logging():
 
 # Telegram
 TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN")
-TELEGRAM_CHAT_ID = os.getenv("TELEGRAM_CHAT_ID")
+
+# Grace Service
+GRACE_SERVICE_URL = os.getenv("GRACE_SERVICE_URL")
