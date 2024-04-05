@@ -2,12 +2,9 @@ import logging
 
 from callbacks.text_message import text_message
 from callbacks.voice_message import voice_message
-from dotenv import load_dotenv
 from settings import TELEGRAM_TOKEN, enable_logging
 from telegram import Update
 from telegram.ext import Application, MessageHandler, filters
-
-load_dotenv()
 
 
 def main() -> None:
