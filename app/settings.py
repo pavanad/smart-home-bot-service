@@ -13,5 +13,6 @@ def enable_logging():
     logging.getLogger("httpx").setLevel(logging.WARNING)
 
 
-def get_token() -> str:
-    return os.getenv("TELEGRAM_TOKEN")
+# Telegram
+TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN")
+TELEGRAM_CHAT_ID = os.getenv("TELEGRAM_CHAT_ID")
