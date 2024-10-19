@@ -26,7 +26,9 @@ async def voice_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> N
 
     # call grace service with user message
     chat_id = update.message.chat_id
-    response_text = grace_service_invoke(user_message, chat_id)
+    first_name = update.message.chat.first_name
+    message = f"My name is {first_name}! {user_message}"
+    response_text = grace_service_invoke(message, chat_id)
 
     temp_file = "temp.mp3"
     response_speech = Speech(response_text, lang="pt-BR")
