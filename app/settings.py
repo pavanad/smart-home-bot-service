@@ -1,5 +1,6 @@
 import logging
 import os
+import sys
 
 from dotenv import load_dotenv
 
@@ -11,8 +12,7 @@ def enable_logging():
         level=logging.INFO,
         format="%(asctime)s %(levelname)s (%(name)s) %(message)s",
         datefmt="%d-%m-%Y %H:%M:%S",
-        filename="logs/bot_service.log",
-        filemode="a",
+        handlers=[logging.StreamHandler(sys.stdout)],
     )
     logging.getLogger("httpx").setLevel(logging.WARNING)
 

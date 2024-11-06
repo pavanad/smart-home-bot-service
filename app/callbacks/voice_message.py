@@ -4,8 +4,10 @@ from io import BytesIO
 
 import speech_recognition as sr
 from google_speech import Speech
+from messages import ERROR_CONVERT_AUDIO_TO_TEXT, ERROR_INVOKING_GRACE_SERVICE
 from pydub import AudioSegment
 from services.grace import grace_service_invoke
+from speech_recognition.exceptions import UnknownValueError
 from telegram import Update
 from telegram.ext import ContextTypes
 
@@ -13,31 +15,43 @@ logger = logging.getLogger(__name__)
 
 
 async def voice_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+
+    response_text = ""
     audio = update.message.voice
     audio_file_id = audio.file_id
-    audio_file = await context.bot.get_file(audio_file_id)
 
-    audio_memory = BytesIO()
-    await audio_file.download_to_memory(audio_memory)
-    audio_memory.seek(0)
+    try:
+        audio_file = await context.bot.get_file(audio_file_id)
+        logger.info("Received audio file")
 
-    user_message = convert_audio_to_text(audio_memory)
-    logger.info(f"Received text: {user_message}")
+        audio_memory = BytesIO()
+        await audio_file.download_to_memory(audio_memory)
+        audio_memory.seek(0)
 
-    # call grace service with user message
-    chat_id = update.message.chat_id
-    first_name = update.message.chat.first_name
-    message = f"My name is {first_name}! {user_message}"
-    response_text = grace_service_invoke(message, chat_id)
+        user_message = convert_audio_to_text(audio_memory)
+        logger.info(f"Received text: {user_message}")
 
-    temp_file = "temp.mp3"
-    response_speech = Speech(response_text, lang="pt-BR")
-    response_speech.save(temp_file)
+        # call grace service with user message
+        chat_id = update.message.chat_id
+        first_name = update.message.chat.first_name
+        message = f"My name is {first_name}! {user_message}"
+        response_text = grace_service_invoke(message, chat_id)
+    except UnknownValueError as error:
+        logger.error(f"Error converting audio to text: {error}")
+        await update.message.reply_text(ERROR_CONVERT_AUDIO_TO_TEXT)
+    except Exception as error:
+        logger.error(f"Error invoking grace service: {error}")
+        await update.message.reply_text(ERROR_INVOKING_GRACE_SERVICE)
 
-    await update.message.reply_voice(voice=temp_file)
+    if response_text:
+        temp_file = "temp.mp3"
+        response_speech = Speech(response_text, lang="pt-BR")
+        response_speech.save(temp_file)
 
-    if os.path.exists(temp_file):
-        os.remove(temp_file)
+        await update.message.reply_voice(voice=temp_file)
+
+        if os.path.exists(temp_file):
+            os.remove(temp_file)
 
 
 def convert_audio_to_text(audio_memory: BytesIO) -> str:
