@@ -1,0 +1,15 @@
+version: '3.8'
+
+services:
+  smart-home-bot:
+    image: smart-home-bot
+    container_name: smart-home-bot
+    environment:
+      - GRACE_SERVICE_URL
+      - TELEGRAM_TOKEN
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    restart: always
+    volumes:
+      - ./logs/:/app/logs
