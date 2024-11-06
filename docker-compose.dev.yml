@@ -10,5 +10,3 @@ services:
       context: .
       dockerfile: ./Dockerfile
     restart: always
-    volumes:
-      - ./logs/:/app/logs
