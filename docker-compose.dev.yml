@@ -1,0 +1,12 @@
+version: '3.8'
+
+services:
+  smart-home-bot:
+    image: smart-home-bot
+    container_name: smart-home-bot-dev
+    env_file:
+      - .env
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    restart: always
