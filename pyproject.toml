@@ -13,8 +13,6 @@ pydub = "0.25.1"
 google-speech = "1.2.0"
 requests = "2.31.0"
 
-[tool.poetry.dev-dependencies]
-
 [tool.poetry.group.dev.dependencies]
 black = "^24.10.0"
 flake8 = "^7.1.1"

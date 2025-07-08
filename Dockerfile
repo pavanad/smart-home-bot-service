@@ -13,10 +13,10 @@ RUN curl -sSL https://install.python-poetry.org | python3 -
 
 WORKDIR /app
 
-COPY pyproject.toml poetry.lock ./
+COPY pyproject.toml ./
 
 RUN ~/.local/bin/poetry config virtualenvs.create false
-RUN ~/.local/bin/poetry install
+RUN ~/.local/bin/poetry install --no-root --without dev
 
 
 FROM python:3.10-slim
